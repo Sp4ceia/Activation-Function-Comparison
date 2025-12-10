@@ -7,29 +7,10 @@ print(tf.__version__)
 fashion_mnist = tf.keras.datasets.fashion_mnist
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
 clothes = ['T-shirt or another top', 'Pants', 'Pullover', 'Dress', 'Jacket', 'Sandal or Heels', 'Shirt', 'Sneaker', 'Bag','Boot']
-'''
-Ensuring that the images are correctly represented
-plt.figure()
-plt.imshow(train_images[8])
-plt.colorbar()
-plt.grid(False)
-plt.show()
-'''
 train_images = train_images / 255.0
 test_images = test_images / 255.0
 train_images=train_images[:50000]
-train_labels=train_labels[:50000]
-'''
-showing how the model identifies the first 25 images from the dataset
-plt.figure(figsize=(10,10))
-for i in range(25):
-    plt.subplot(5, 5, i+1)
-    plt.xticks([])
-    plt.yticks([])
-    plt.grid(False)
-    plt.imshow(train_images[i], cmap=plt.cm.binary)
-    plt.xlabel(clothes[train_labels[i]])
-'''
+train_labels=train_labels[:50000]#Fewer images allows lower compile times
 train_images = np.expand_dims(train_images, -1)
 test_images = np.expand_dims(test_images, -1)
 activations = {"ReLU": "relu", "Sigmoid": "sigmoid", "tanh": keras.activations.tanh,"LeakyReLU": tf.nn.leaky_relu}
@@ -38,13 +19,13 @@ for name, act in activations.items():
     print("\nActivation function of the currently trained model: ", name)
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(28,28)),
-        keras.layers.Dense(64, activation=act),
+        keras.layers.Dense(64, activation=act), #Fewer neurons in each of the models significantly decreases compile time but ther eis an accuracy loss of 1.5-2%
         keras.layers.Dense(10)
     ])
     model.compile(optimizer='adam',
                   loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=['accuracy'])
-    model.fit(train_images, train_labels, epochs=5, verbose=0)
+    model.fit(train_images, train_labels, epochs=5, verbose=0)#lower epochs value speeds up the compile process
     models[name] = model
 test_accuracies = {}
 for name, model in models.items():
