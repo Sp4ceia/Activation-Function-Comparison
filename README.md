@@ -13,19 +13,19 @@ train_images=train_images[:50000]
 train_labels=train_labels[:50000]#Fewer images allows lower compile times
 train_images = np.expand_dims(train_images, -1)
 test_images = np.expand_dims(test_images, -1)
-activations = {"ReLU": "relu", "Sigmoid": "sigmoid", "tanh": keras.activations.tanh,"LeakyReLU": tf.nn.leaky_relu}
+activations = {"ReLU": "relu", "Sigmoid": "sigmoid", "tanh": keras.activations.tanh,"LeakyReLU": tf.nn.leaky_relu}#dictionary of these functions allows adding more #of them in the future
 models = {}
 for name, act in activations.items():
     print("\nActivation function of the currently trained model: ", name)
     model = keras.Sequential([
         keras.layers.Flatten(input_shape=(28,28)),
-        keras.layers.Dense(64, activation=act), #Fewer neurons in each of the models significantly decreases compile time but ther eis an accuracy loss of 1.5-2%
+        keras.layers.Dense(64, activation=act), #Fewer neurons in each of the models significantly decreases compile time but there iis an accuracy loss of 1.5-2%
         keras.layers.Dense(10)
     ])
     model.compile(optimizer='adam',
                   loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=['accuracy'])
-    model.fit(train_images, train_labels, epochs=5, verbose=0)#lower epochs value speeds up the compile process
+    model.fit(train_images, train_labels, epochs=5, verbose=0)#Lower epochs value speeds up the compiling process
     models[name] = model
 test_accuracies = {}
 for name, model in models.items():
