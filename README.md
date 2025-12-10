@@ -4,7 +4,7 @@ import keras.activations
 import numpy as np
 import matplotlib.pyplot as plt
 print(tf.__version__)
-fashion_mnist = tf.keras.datasets.fashion_mnist
+fashion_mnist = tf.keras.datasets.fashion_mnist #Importing a dataset that is low in variability and behavior oriented at the cost of not being a performance optimized model
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
 clothes = ['T-shirt or another top', 'Pants', 'Pullover', 'Dress', 'Jacket', 'Sandal or Heels', 'Shirt', 'Sneaker', 'Bag','Boot']
 train_images = train_images / 255.0
