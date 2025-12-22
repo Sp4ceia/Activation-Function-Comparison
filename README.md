@@ -1,69 +1,21 @@
-import tensorflow as tf
-from tensorflow import keras
-import keras.activations
-import numpy as np
-import matplotlib.pyplot as plt
-print(tf.__version__)
-fashion_mnist = tf.keras.datasets.fashion_mnist #Importing a dataset that is low in variability and behavior oriented at the cost of not being a performance optimized model
-(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
-clothes = ['T-shirt or another top', 'Pants', 'Pullover', 'Dress', 'Jacket', 'Sandal or Heels', 'Shirt', 'Sneaker', 'Bag','Boot']
-train_images = train_images / 255.0
-test_images = test_images / 255.0
-train_images=train_images[:50000]
-train_labels=train_labels[:50000]#Fewer images allows lower compile times
-train_images = np.expand_dims(train_images, -1)
-test_images = np.expand_dims(test_images, -1)
-activations = {"ReLU": "relu", "Sigmoid": "sigmoid", "tanh": keras.activations.tanh,"LeakyReLU": tf.nn.leaky_relu}#dictionary of these functions allows adding more #of them in the future
-models = {}
-for name, act in activations.items():
-    print("\nActivation function of the currently trained model: ", name)
-    model = keras.Sequential([
-        keras.layers.Flatten(input_shape=(28,28)),
-        keras.layers.Dense(64, activation=act), #Fewer neurons in each of the models significantly decreases compile time but there iis an accuracy loss of 1.5-2%
-        keras.layers.Dense(10)
-    ])
-    model.compile(optimizer='adam',
-                  loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                  metrics=['accuracy'])
-    model.fit(train_images, train_labels, epochs=5, verbose=0)#Lower epochs value speeds up the compiling process
-    models[name] = model
-test_accuracies = {}
-for name, model in models.items():
-    test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=0)
-    test_accuracies[name] = test_acc
-    print(f"Test accuracy({name}): {test_acc: .4f}")
-means= list(test_accuracies.values())
-model_names = list(test_accuracies.keys())
-mean_of_means = np.mean(means)
-median_of_means = np.median(means)
-std_between_models = np.std(means)
+This project compares the overall accuracy of 4 TensorFlow based neural nets trained on the  FashionMNIST dataset. These 4 neural networks have the same number of neurons (164) and the same epoch value (5) (Epoch value is the number of passes made by the AI model through the entire dataset). The goal of this project is to produce consistent accuracy values about the results of each activation function by minimizing data noise. In order to minimize data noise, I chose the FashionMNIST data set. 
+Compared functions: 
+1) ReLU
+2) Leaky ReLU
+3) Sigmoid
+4) Hyperbolic Tangent
+Training Setup:
+  Optimizer = Adam
+  Loss Function =  Cross Categorical Entropy
+  Batch Size = 32 (Which is the default size for tensorflow neural nets)
+Mean accuracy of all models after 4 test runs:
+  ReLU == 86.575%
+  Sigmoid == 86.500%
+  tanh == 86.125%
+  LeakyReLU == 85.975%
+ 
 
-print("\n Statistics of activation functions (accuracy)")
-print("Model accuracies: ", {k: f"{v:.4f}"for k, v in test_accuracies.items()})
-print(f"Mean of accuracies: {mean_of_means:.4f}")
-print(f"Median of accuracies: {median_of_means:.4f}")
-print(f"Standard Deviation of accuracies: {std_between_models:.4f}")
 
-plt.figure(figsize=(7,5))
-plt.bar(model_names, means)
-plt.ylim(0,1.05)
-plt.ylabel("Test Accuracy")
-plt.title("Accuracies of models with different activation functions")
-stats_text = (
-    f"Mean = {mean_of_means: .4f}\n"
-    f"Median = {median_of_means: .4f}\n"
-    f"Standard Deviation = {std_between_models: .4f}\n"
-)
-for i, v in enumerate(means):
-    plt.text(i, v + 0.01, f"{v:.3f}", ha ='center', va='bottom')
-ax = plt.gca()
-ax.text(
-0.92,0.02,
-stats_text,
-transform=ax.transAxes,
-ha='right',
-va='bottom',
-fontsize=9,
-bbox=dict(facecolor='white',alpha=0.7))
-plt.grid(axis='y', linestyle='--', alpha=0.4)
-plt.show()
+
+
+
