@@ -80,8 +80,6 @@ tanh's derivative reaches up to 1 and ReLU's derivative is exactly 1 for positiv
 gradients shrink much less from layer to layer. This is why tanh is only slightly affected and the
 ReLU family is not affected at all.
 
-Hyperbolic Tangent's derivative increases up to 1, and Rectified Linear Unit's deritative in the positive axis is exactly 1.
-
 ## Reproducibility
 Every model is built right after calling `keras.utils.set_random_seed(seed)` with seed 1, 2 or 3.
 This fixes the random number generators of Python, NumPy and TensorFlow at once, so the initial
@@ -102,13 +100,15 @@ checked by anyone.
 
 Results were produced on CPU with TensorFlow 2.21; other hardware (e.g. a GPU) or other library
 versions may give slightly different numbers.
+
 To reproduce: install `tensorflow`, `matplotlib` and `pandas`, set `n_layers` and `n_epochs`
 in the training cell of `Activation Function Comparison.ipynb`, and run all cells.
 
 ## Repository structure
 - `Activation Function Comparison.ipynb`: training and per-experiment plots
 - `results/raw/`: per-epoch logs of every run (CSV)
-- `results/summary.csv`: mean ± std for every configuration
+- `results/summary.csv`: mean ± std for every configuration (one row per configuration)
+- `results/summary_table.csv`: the same numbers, one row per activation function
 - `figures/`: all plots
 - `tools/`: scripts that convert training logs to CSV and build the summary table
 
